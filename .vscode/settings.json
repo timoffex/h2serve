@@ -1,9 +1,20 @@
 {
-  "editor.rulers": [88],
   "[python]": {
+    "editor.rulers": [88],
     "diffEditor.ignoreTrimWhitespace": false,
     "editor.formatOnType": true,
     "editor.tabSize": 4,
     "editor.formatOnSave": true,
+  },
+  "[markdown]": {
+    "editor.rulers": [80],
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
   }
 }
