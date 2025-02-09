@@ -95,6 +95,39 @@ class HTTP2Tester:
         self._conn.initiate_connection()
         await self._flush()
 
+    async def start_request(
+        self,
+        method: str,
+        path: str,
+        *,
+        extra_headers: list[tuple[str, str]] | None = None,
+        end_stream: bool,
+    ) -> int:
+        """Send headers for a standard HTTP request.
+
+        The authority is localhost and the scheme is https.
+
+        Args:
+            method: The HTTP :method header.
+            path: The :path header.
+
+        Returns:
+            Stream ID for the new request.
+        """
+        stream_id = self.new_stream_id()
+        await self.send_headers(
+            stream_id,
+            headers=[
+                (":method", method),
+                (":path", path),
+                (":authority", "localhost"),
+                (":scheme", "https"),
+                *(extra_headers or []),
+            ],
+            end_stream=end_stream,
+        )
+        return stream_id
+
     async def send_headers(self, *args, **kwargs) -> None:
         self._conn.send_headers(*args, **kwargs)
         await self._flush()
@@ -105,6 +138,10 @@ class HTTP2Tester:
 
     async def end_stream(self, stream_id: int) -> None:
         self._conn.end_stream(stream_id)
+        await self._flush()
+
+    async def reset_stream(self, stream_id: int) -> None:
+        self._conn.reset_stream(stream_id)
         await self._flush()
 
     async def ping(self, *args, **kwargs):

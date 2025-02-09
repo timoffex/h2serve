@@ -27,7 +27,7 @@ class HTTP2StreamHandler:
     ) -> None:
         self._state = state
         self.id = stream_id
-        self._headers = [Header(name, value) for (name, value) in headers]
+        self._headers: list[tuple[bytes, bytes]] = list(headers)
 
         self._nursery: trio.Nursery | None = None
 
@@ -63,12 +63,13 @@ class HTTP2StreamHandler:
                 self._state,
             )
 
+            # Close the body and trailers receive streams after the app returns.
             async with self._req_body_out, self._trailers_out:
                 await app(req, resp)
 
             # In case the client fails to end the stream, make sure we do it.
             if not resp.ended:
-                _logger.warn(
+                _logger.warning(
                     "Application did not properly end stream."
                     " Sending an empty DATA frame with the END_STREAM flag."
                 )
@@ -109,8 +110,8 @@ class HTTP2StreamHandler:
     def push_trailers(self, trailers: Iterable[hpack.HeaderTuple]) -> None:
         """Push request trailers to the app."""
         try:
-            for name, value in trailers:
-                self._trailers_in.send_nowait(Header(name, value))
+            for trailer_pair in trailers:
+                self._trailers_in.send_nowait(trailer_pair)
         except trio.ClosedResourceError:
             # This means the handler will not read the rest of the trailers.
             return

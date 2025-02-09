@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import ssl
 
+import hyperframe.frame
 import pytest
 import trio
 
 import timoffex_http2
-
 from tests import http2tester
 
 
@@ -16,12 +16,19 @@ def start_test_server(nursery: trio.Nursery):
 
     Args:
         app: The handler to run on the server.
+        initiated: Whether to initiate the connection and handle the initial
+            frames. Defaults to False.
 
     Returns:
         An HTTP2Tester instance.
     """
 
-    async def fn(app, *, server_events=None) -> http2tester.HTTP2Tester:
+    async def fn(
+        app,
+        *,
+        server_events=None,
+        initiated=False,
+    ) -> http2tester.HTTP2Tester:
         server = await timoffex_http2.serve(
             nursery,
             app,
@@ -42,6 +49,13 @@ def start_test_server(nursery: trio.Nursery):
             ssl_context=ssl_ctx,
         )
 
-        return http2tester.HTTP2Tester(server, stream)
+        tester = http2tester.HTTP2Tester(server, stream)
+
+        if initiated:
+            await tester.initiate_connection()
+            await tester.expect(hyperframe.frame.SettingsFrame)  # Server
+            await tester.expect(hyperframe.frame.SettingsFrame)  # Client ack
+
+        return tester
 
     return fn

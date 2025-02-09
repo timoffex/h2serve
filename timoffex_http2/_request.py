@@ -36,10 +36,7 @@ class HTTP2Request:
         self.trailers = trailers
 
 
-@dataclasses.dataclass(frozen=True)
-class Header:
-    name: bytes
-    value: bytes
+Header = tuple[bytes, bytes]
 
 
 @dataclasses.dataclass(frozen=True)
