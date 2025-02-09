@@ -6,7 +6,7 @@ __pycache__
 
 # Output of the Python 'coverage' package, containing code coverage.
 .coverage
-htmlcov/**
+htmlcov
 
 # Certificate used for testing.
 localhost.pem
