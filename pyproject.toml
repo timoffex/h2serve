@@ -19,5 +19,5 @@ ignore_missing_imports = true
 module = ["hpack"]
 ignore_missing_imports = true
 
-[[tool.pytest.ini_options]]
+[tool.pytest.ini_options]
 trio_mode = true
