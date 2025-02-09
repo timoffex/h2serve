@@ -4,5 +4,9 @@
 .pytest_cache
 __pycache__
 
+# Output of the Python 'coverage' package, containing code coverage.
+.coverage
+htmlcov/**
+
 # Certificate used for testing.
 localhost.pem
