@@ -1,0 +1,6 @@
+# Requirements for testing and development.
+
+pytest
+pytest-trio
+
+hyperframe

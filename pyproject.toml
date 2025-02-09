@@ -1,0 +1,23 @@
+[project]
+name = "timoffex_http2"
+version = "0.1.0"
+dependencies = [
+  "h2 ~= 4.0",
+  "trio ~= 0.28.0",
+  "typing-extensions ~= 4.4",  # for 'override'
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[[tool.mypy.overrides]]
+module = ["h2.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["hpack"]
+ignore_missing_imports = true
+
+[[tool.pytest.ini_options]]
+trio_mode = true

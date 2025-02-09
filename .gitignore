@@ -1,0 +1,8 @@
+# Standard Python development folders.
+.venv
+.mypy_cache
+.pytest_cache
+__pycache__
+
+# Certificate used for testing.
+localhost.pem
