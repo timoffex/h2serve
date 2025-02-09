@@ -63,7 +63,8 @@ class HTTP2StreamHandler:
                 self._state,
             )
 
-            await app(req, resp)
+            async with self._req_body_out, self._trailers_out:
+                await app(req, resp)
 
             # In case the client fails to end the stream, make sure we do it.
             if not resp.ended:

@@ -81,5 +81,7 @@ class DataChunkReceiveChannel(trio.abc.ReceiveChannel[DataChunk]):
             try:
                 chunk = self._chan.receive_nowait()
                 chunk.ack.set()
-            except (trio.WouldBlock, trio.EndOfChannel):
+            except (trio.WouldBlock, trio.EndOfChannel, trio.ClosedResourceError):
+                # WouldBlock, EndOfChannel: No more data.
+                # ClosedResourceError: This has already been closed.
                 return
