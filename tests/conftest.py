@@ -6,7 +6,7 @@ import hyperframe.frame
 import pytest
 import trio
 
-import timoffex_http2
+import h2serve
 from tests import http2tester
 
 
@@ -29,7 +29,7 @@ def start_test_server(nursery: trio.Nursery):
         server_events=None,
         initiated=False,
     ) -> http2tester.HTTP2Tester:
-        server = await timoffex_http2.serve(
+        server = await h2serve.serve(
             nursery,
             app,
             host="localhost",

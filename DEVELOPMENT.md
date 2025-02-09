@@ -21,6 +21,7 @@ Activate it as described by the command.
 Install development requirements:
 
 ```
+uv pip install -e .
 uv pip install -r requirements.txt
 ```
 

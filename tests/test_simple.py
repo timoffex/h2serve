@@ -1,14 +1,14 @@
 import hyperframe.frame
 import trio
 
-import timoffex_http2
+import h2serve
 from tests.http2tester import HTTP2Tester
 
 
 async def test_passes_request_to_app(start_test_server) -> None:
-    received_req_headers: list[timoffex_http2.Header] = []
+    received_req_headers: list[h2serve.Header] = []
     received_req_body: bytes = b""
-    received_req_trailers: list[timoffex_http2.Header] = []
+    received_req_trailers: list[h2serve.Header] = []
 
     async def app(req, resp):
         nonlocal received_req_headers, received_req_body, received_req_trailers

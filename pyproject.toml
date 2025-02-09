@@ -1,5 +1,5 @@
 [project]
-name = "timoffex_http2"
+name = "h2serve"
 version = "0.1.0"
 dependencies = [
   "h2 ~= 4.0",

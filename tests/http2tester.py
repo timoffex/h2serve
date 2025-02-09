@@ -6,7 +6,7 @@ import h2.connection
 import hyperframe.frame
 import trio
 
-import timoffex_http2
+import h2serve
 
 
 @contextlib.contextmanager
@@ -24,7 +24,7 @@ _FrameType = TypeVar("_FrameType", bound=hyperframe.frame.Frame)
 class HTTP2Tester:
     def __init__(
         self,
-        server: timoffex_http2.Server,
+        server: h2serve.Server,
         stream: trio.SSLStream,
     ) -> None:
         self._server = server
