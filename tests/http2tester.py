@@ -1,4 +1,5 @@
 import contextlib
+import random
 from typing import Iterator, TypeVar
 
 import h2.connection
@@ -65,6 +66,13 @@ class HTTP2Tester:
             await self._flush()
 
             return frame
+
+    async def ping_and_expect_pong(self) -> None:
+        """Send a PING and expect a PING as the next incoming frame."""
+        opaque = random.randbytes(8)
+        await self.ping(opaque)
+        pong = await self.expect(hyperframe.frame.PingFrame)
+        assert pong.opaque_data == opaque
 
     async def _receive_exactly(self, n: int) -> bytes:
         chunks: list[bytes | bytearray] = []

@@ -14,7 +14,7 @@ async def test_response_before_receiving_full_request(start_test_server) -> None
     await tester.expect(hyperframe.frame.SettingsFrame)  # Server settings
     await tester.expect(hyperframe.frame.SettingsFrame)  # Client settings ack
 
-    # Send headers for a request.
+    # STEP 1. Send headers for a request.
     stream_id = tester.new_stream_id()
     await tester.send_headers(
         stream_id,
@@ -30,3 +30,10 @@ async def test_response_before_receiving_full_request(start_test_server) -> None
     # The response is received despite the request not being fully sent.
     headers = await tester.expect(hyperframe.frame.HeadersFrame)
     assert "END_STREAM" in headers.flags
+
+    # STEP 2. Finish the request.
+    await tester.send_data(stream_id, b"abc", end_stream=False)
+    await tester.send_headers(stream_id, [("X_MY_TRAILER", "123")], end_stream=True)
+
+    # Ensure no other frames are generated.
+    await tester.ping_and_expect_pong()
