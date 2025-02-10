@@ -7,6 +7,7 @@ import pytest
 import trio
 
 import h2serve
+
 from . import http2tester
 
 
@@ -23,18 +24,12 @@ def start_test_server(nursery: trio.Nursery):
         An HTTP2Tester instance.
     """
 
-    async def fn(
-        app,
-        *,
-        server_events=None,
-        initiated=False,
-    ) -> http2tester.HTTP2Tester:
+    async def fn(app, *, initiated=False) -> http2tester.HTTP2Tester:
         server = await h2serve.serve(
             nursery,
             app,
             host="localhost",
             port=0,
-            server_events=server_events,
         )
 
         ssl_ctx = ssl.create_default_context(

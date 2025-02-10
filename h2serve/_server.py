@@ -7,7 +7,6 @@ from typing import cast
 
 import trio
 
-from . import _events, events
 from ._app_handler import AppHandler
 from ._conn_handler import HTTP2ConnectionHandler
 from ._logging import ContextualLogger
@@ -65,7 +64,6 @@ async def serve(
     *,
     host: str | bytes | None,
     port: int,
-    server_events: trio.abc.SendChannel[events.ServerEvent] | None = None,
 ) -> Server:
     """Start an HTTP/2 server.
 
@@ -90,7 +88,6 @@ async def serve(
             app,
             host=host,
             port=port,
-            server_events=server_events,
         )
     )
 
@@ -103,46 +100,39 @@ async def _serve(
     host: str | bytes | None,
     port: int,
     *,
-    server_events: trio.abc.SendChannel[events.ServerEvent] | None = None,
     task_status: trio.TaskStatus[Server] = trio.TASK_STATUS_IGNORED,
 ) -> None:
-    server_events_token = _events.server_events.set(server_events)
+    ssl_ctx = ssl.create_default_context(
+        # NOTE: CLIENT_AUTH is used for creating a server socket.
+        # https://github.com/python/cpython/issues/73996
+        purpose=ssl.Purpose.CLIENT_AUTH,
+    )
 
-    try:
-        ssl_ctx = ssl.create_default_context(
-            # NOTE: CLIENT_AUTH is used for creating a server socket.
-            # https://github.com/python/cpython/issues/73996
-            purpose=ssl.Purpose.CLIENT_AUTH,
+    ssl_ctx.load_cert_chain("localhost.pem")
+    ssl_ctx.set_alpn_protocols(["h2"])
+
+    listeners = await trio.open_ssl_over_tcp_listeners(
+        port,
+        ssl_ctx,
+        host=host,
+    )
+
+    addresses: list[INETSocketAddr] = []
+    for listener in listeners:
+        sockstream = cast(trio.SocketStream, listener.transport_listener)
+        addresses.append(sockstream.socket.getsockname())
+    _logger.info(f"Listening on {addresses}")
+
+    cancel_scope = trio.CancelScope()
+    task_status.started(
+        Server(
+            cancel_scope=cancel_scope,
+            addresses=addresses,
         )
+    )
 
-        ssl_ctx.load_cert_chain("localhost.pem")
-        ssl_ctx.set_alpn_protocols(["h2"])
+    async def handle(stream: trio.SSLStream[trio.SocketStream]) -> None:
+        await HTTP2ConnectionHandler(stream, app).handle_no_except()
 
-        listeners = await trio.open_ssl_over_tcp_listeners(
-            port,
-            ssl_ctx,
-            host=host,
-        )
-
-        addresses: list[INETSocketAddr] = []
-        for listener in listeners:
-            sockstream = cast(trio.SocketStream, listener.transport_listener)
-            addresses.append(sockstream.socket.getsockname())
-        _logger.info(f"Listening on {addresses}")
-
-        cancel_scope = trio.CancelScope()
-        task_status.started(
-            Server(
-                cancel_scope=cancel_scope,
-                addresses=addresses,
-            )
-        )
-
-        async def handle(stream: trio.SSLStream[trio.SocketStream]) -> None:
-            await HTTP2ConnectionHandler(stream, app).handle_no_except()
-
-        with cancel_scope:
-            await trio.serve_listeners(handle, listeners)
-
-    finally:
-        _events.server_events.reset(server_events_token)
+    with cancel_scope:
+        await trio.serve_listeners(handle, listeners)

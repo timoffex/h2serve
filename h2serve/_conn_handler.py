@@ -14,7 +14,6 @@ from ._notifying_channel import notifying_channel
 from ._state import HTTP2State
 from ._stream_handler import HTTP2StreamHandler
 from ._logging import ContextualLogger, peer_ctx, stream_id_ctx
-from . import _events, events
 
 _logger = ContextualLogger(logging.getLogger(__name__))
 
@@ -60,7 +59,6 @@ class HTTP2ConnectionHandler:
 
         except Exception as e:
             _logger.exception("Encountered error.", exc_info=e)
-            await _events.log_event(events.ConnectionError(peer=self._peer, exc=e))
 
         else:
             _logger.info("Reached end.")
@@ -199,14 +197,6 @@ class HTTP2ConnectionHandler:
 
         except Exception as e:
             _logger.exception("Stream ended due to exception.", exc_info=e)
-
-            await _events.log_event(
-                events.StreamError(
-                    peer=self._peer,
-                    stream_id=stream.id,
-                    exc=e,
-                )
-            )
 
             # NOTE: If the stream ended because the connection is dead, this will
             #   also error out, cancelling all stream handlers in the nursery.
