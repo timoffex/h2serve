@@ -1,8 +1,10 @@
 # Requirements for testing and development.
 
-coverage
-
 pytest
 pytest-trio
+coverage
+
+ruff
+mypy
 
 hyperframe

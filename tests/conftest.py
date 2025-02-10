@@ -7,7 +7,7 @@ import pytest
 import trio
 
 import h2serve
-from tests import http2tester
+from . import http2tester
 
 
 @pytest.fixture

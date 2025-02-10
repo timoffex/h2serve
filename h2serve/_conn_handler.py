@@ -154,6 +154,8 @@ class HTTP2ConnectionHandler:
         handler_nursery: trio.Nursery,
     ) -> None:
         if isinstance(event, h2.events.RequestReceived):
+            assert event.stream_id is not None
+            assert event.headers is not None
             stream = HTTP2StreamHandler(
                 self._state,
                 event.stream_id,
@@ -165,12 +167,17 @@ class HTTP2ConnectionHandler:
             handler_nursery.start_soon(self._run_stream_handler, stream)
 
         elif isinstance(event, h2.events.DataReceived):
+            assert event.data is not None
+            assert event.flow_controlled_length is not None
+
             # NOTE: We can receive data after we have sent a full response.
             if event.stream_id in self._streams:
                 stream = self._streams[event.stream_id]
                 stream.push_data(event.data, event.flow_controlled_length)
 
         elif isinstance(event, h2.events.TrailersReceived):
+            assert event.headers is not None
+
             # NOTE: We can receive trailers after we have sent a full response.
             if event.stream_id in self._streams:
                 stream = self._streams[event.stream_id]

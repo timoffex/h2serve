@@ -2,7 +2,8 @@ import hyperframe.frame
 import trio
 
 import h2serve
-from tests.http2tester import HTTP2Tester
+
+from .http2tester import HTTP2Tester
 
 
 async def test_passes_request_to_app(start_test_server) -> None:
