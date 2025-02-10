@@ -4,6 +4,7 @@ from collections.abc import Iterator
 from typing import TypeVar
 
 import h2.connection
+import h2.settings
 import hyperframe.frame
 import trio
 
@@ -94,6 +95,21 @@ class HTTP2Tester:
 
     async def initiate_connection(self) -> None:
         self._conn.initiate_connection()
+        await self._flush()
+
+    async def update_settings(
+        self,
+        updates: dict[h2.settings.SettingCodes | int, int],
+    ) -> None:
+        self._conn.update_settings(updates)
+        await self._flush()
+
+    async def acknowledge_received_data(
+        self,
+        acknowledged_size: int,
+        stream_id: int,
+    ) -> None:
+        self._conn.acknowledge_received_data(acknowledged_size, stream_id)
         await self._flush()
 
     async def start_request(
