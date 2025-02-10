@@ -5,7 +5,7 @@ from ._request import DataChunk, Header, HTTP2Request
 from ._response import HTTP2Response
 from ._server import Server, serve
 
-__version__ = "0.1.0-dev"
+__version__ = "0.1.0-dev.1"
 
 __all__ = [
     "AppHandler",

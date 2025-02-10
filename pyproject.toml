@@ -9,11 +9,12 @@ dependencies = [
 ]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-semver"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
 path = "h2serve/__init__.py"
+scheme = "semver"
 
 [tool.ruff.lint]
 pydocstyle.convention = "google"
