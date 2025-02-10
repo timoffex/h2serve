@@ -1,6 +1,7 @@
 import contextlib
 import random
-from typing import Iterator, TypeVar
+from collections.abc import Iterator
+from typing import TypeVar
 
 import h2.connection
 import hyperframe.frame

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 import h2.config
 import h2.connection
@@ -24,7 +24,7 @@ class HTTP2State:
     def __init__(
         self,
         out: NotifyingSendChannel,
-    ):
+    ) -> None:
         """Initiate the state.
 
         Args:
@@ -43,7 +43,7 @@ class HTTP2State:
     def __enter__(self) -> None:
         pass
 
-    def __exit__(self, exc_type, exc, tb) -> None:
+    def __exit__(self, exc_type, exc, tb) -> None:  # noqa: ANN001
         self._out.close()
 
     @contextlib.asynccontextmanager

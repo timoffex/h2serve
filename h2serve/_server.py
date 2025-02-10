@@ -27,7 +27,7 @@ class Server:
         self,
         cancel_scope: trio.CancelScope,
         addresses: list[INETSocketAddr],
-    ):
+    ) -> None:
         self._cancel_scope = cancel_scope
         self._addresses = addresses
 
@@ -81,7 +81,6 @@ async def serve(
     Returns:
         A handle to the server.
     """
-
     server = await nursery.start(
         functools.partial(
             _serve,
@@ -121,7 +120,7 @@ async def _serve(
     for listener in listeners:
         sockstream = cast(trio.SocketStream, listener.transport_listener)
         addresses.append(sockstream.socket.getsockname())
-    _logger.info(f"Listening on {addresses}")
+    _logger.info("Listening on %s", addresses)
 
     cancel_scope = trio.CancelScope()
     task_status.started(

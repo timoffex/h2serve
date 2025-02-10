@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from ._state import HTTP2State
 
@@ -8,7 +8,7 @@ from ._state import HTTP2State
 class HTTP2Response:
     """An HTTP/2 response writer."""
 
-    def __init__(self, stream_id: int, state: HTTP2State):
+    def __init__(self, stream_id: int, state: HTTP2State) -> None:
         self._id = stream_id
         self._state = state
 

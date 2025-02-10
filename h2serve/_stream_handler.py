@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Iterable
+from collections.abc import Iterable
 
 import hpack
 import trio
 
 from ._app_handler import AppHandler
+from ._logging import ContextualLogger
 from ._request import DataChunk, Header, HTTP2Request, unbuffered_data_chunk_channel
 from ._response import HTTP2Response
 from ._state import HTTP2State
-from ._logging import ContextualLogger
 
 _logger = ContextualLogger(logging.getLogger(__name__))
 
@@ -89,7 +89,7 @@ class HTTP2StreamHandler:
 
         ack_event = trio.Event()
 
-        async def handle_ack():
+        async def handle_ack() -> None:
             await ack_event.wait()
             async with self._state.use() as state:
                 state.acknowledge_received_data(

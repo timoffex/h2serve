@@ -1,15 +1,41 @@
 [project]
 name = "h2serve"
 version = "0.1.0"
+requires-python = ">= 3.9"
 dependencies = [
-  "h2 ~= 4.0",  # NOTE: type hints are added in 4.2
+  "h2 ~= 4.0",                # NOTE: type hints are added in 4.2
   "trio ~= 0.28.0",
-  "typing-extensions ~= 4.4",  # for 'override'
+  "typing-extensions ~= 4.4", # for 'override'
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.ruff.lint]
+pydocstyle.convention = "google"
+select = [
+  "E",     # pycodestyle (errors)
+  "W",     # pycodestyle (warnings)
+  "F",     # Pyflakes
+  "C90",   # mccable (code complexity)
+  "I",     # isort (import sorting)
+  "N",     # pep8-naming
+  "D",     # pydocstyle
+  "UP",    # pyupgrade
+  "ANN",   # flake8-annotations
+  "ASYNC", # flake8-async
+  "B",     # flake8-bugbear
+  "LOG",   # flake8-logging
+  "G",     # flake8-logging-format
+  "T20",   # flake8-print
+  "PT",    # flake8-pytest-style
+  "Q",     # flake8-quotes
+  "SIM",   # flake8-simplify
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "ANN"]
 
 [[tool.mypy.overrides]]
 module = ["hpack"]

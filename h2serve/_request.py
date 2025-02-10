@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import dataclasses
 import math
-from typing_extensions import override
 
 import trio
+from typing_extensions import override
 
 
 class HTTP2Request:
@@ -30,7 +30,7 @@ class HTTP2Request:
         headers: list[Header],
         body: trio.abc.ReceiveChannel[DataChunk],
         trailers: trio.abc.ReceiveChannel[Header],
-    ):
+    ) -> None:
         self.headers = headers
         self.body = body
         self.trailers = trailers

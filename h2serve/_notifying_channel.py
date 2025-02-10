@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing_extensions import override
-
 import trio
+from typing_extensions import override
 
 
 def notifying_channel(
@@ -29,7 +28,7 @@ class NotifyingSendChannel:
     def __init__(
         self,
         chan: trio.MemorySendChannel[tuple[bytes, trio.Event | None]],
-    ):
+    ) -> None:
         self._chan = chan
 
     async def send(self, data: bytes, event: trio.Event | None) -> None:
@@ -56,7 +55,7 @@ class NotifyingReceiveChannel(trio.abc.ReceiveChannel[bytes]):
     def __init__(
         self,
         chan: trio.MemoryReceiveChannel[tuple[bytes, trio.Event | None]],
-    ):
+    ) -> None:
         self._chan = chan
 
     @override

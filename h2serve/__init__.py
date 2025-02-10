@@ -1,3 +1,5 @@
+"""A Python HTTP/2 server, built on trio."""
+
 from ._app_handler import AppHandler
 from ._request import DataChunk, Header, HTTP2Request
 from ._response import HTTP2Response

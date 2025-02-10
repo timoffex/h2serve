@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import MutableMapping
 from contextvars import ContextVar
-from typing import Any, MutableMapping
+from typing import Any
 
 peer_ctx: ContextVar[str | None] = ContextVar("peer", default=None)
 """Peer information (address and port) in the context of a connection."""

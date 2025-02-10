@@ -10,10 +10,10 @@ import trio
 from h2.errors import ErrorCodes
 
 from ._app_handler import AppHandler
+from ._logging import ContextualLogger, peer_ctx, stream_id_ctx
 from ._notifying_channel import notifying_channel
 from ._state import HTTP2State
 from ._stream_handler import HTTP2StreamHandler
-from ._logging import ContextualLogger, peer_ctx, stream_id_ctx
 
 _logger = ContextualLogger(logging.getLogger(__name__))
 
