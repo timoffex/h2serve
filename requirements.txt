@@ -2,20 +2,27 @@
 #    uv pip compile requirements.in -o requirements.txt
 -e .
     # via -r requirements.in
+alabaster==1.0.0
+    # via sphinx
 anyio==4.8.0
     # via httpx
 attrs==25.1.0
     # via
     #   outcome
     #   trio
+babel==2.17.0
+    # via sphinx
 backports-tarfile==1.2.0
     # via jaraco-context
 certifi==2025.1.31
     # via
     #   httpcore
     #   httpx
+    #   requests
 cffi==1.17.1
     # via cryptography
+charset-normalizer==3.4.1
+    # via requests
 click==8.1.8
     # via
     #   hatch
@@ -26,6 +33,8 @@ cryptography==44.0.0
     # via secretstorage
 distlib==0.3.9
     # via virtualenv
+docutils==0.21.2
+    # via sphinx
 exceptiongroup==1.2.2
     # via
     #   anyio
@@ -58,7 +67,10 @@ idna==3.10
     #   anyio
     #   httpx
     #   hyperlink
+    #   requests
     #   trio
+imagesize==1.4.1
+    # via sphinx
 importlib-metadata==8.6.1
     # via keyring
 iniconfig==2.0.0
@@ -73,10 +85,14 @@ jeepney==0.8.0
     # via
     #   keyring
     #   secretstorage
+jinja2==3.1.5
+    # via sphinx
 keyring==25.6.0
     # via hatch
 markdown-it-py==3.0.0
     # via rich
+markupsafe==3.0.2
+    # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
 more-itertools==10.6.0
@@ -96,6 +112,7 @@ packaging==24.2
     #   hatch
     #   hatchling
     #   pytest
+    #   sphinx
 pathspec==0.12.1
     # via hatchling
 pexpect==4.9.0
@@ -113,13 +130,17 @@ ptyprocess==0.7.0
 pycparser==2.22
     # via cffi
 pygments==2.19.1
-    # via rich
+    # via
+    #   rich
+    #   sphinx
 pytest==8.3.4
     # via
     #   -r requirements.in
     #   pytest-trio
 pytest-trio==0.8.0
     # via -r requirements.in
+requests==2.32.3
+    # via sphinx
 rich==13.9.4
     # via hatch
 ruff==0.9.5
@@ -132,13 +153,30 @@ sniffio==1.3.1
     # via
     #   anyio
     #   trio
+snowballstemmer==2.2.0
+    # via sphinx
 sortedcontainers==2.4.0
     # via trio
+sphinx==8.1.3
+    # via -r requirements.in
+sphinxcontrib-applehelp==2.0.0
+    # via sphinx
+sphinxcontrib-devhelp==2.0.0
+    # via sphinx
+sphinxcontrib-htmlhelp==2.1.0
+    # via sphinx
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-qthelp==2.0.0
+    # via sphinx
+sphinxcontrib-serializinghtml==2.0.0
+    # via sphinx
 tomli==2.2.1
     # via
     #   hatchling
     #   mypy
     #   pytest
+    #   sphinx
 tomli-w==1.2.0
     # via hatch
 tomlkit==0.13.2
@@ -155,6 +193,8 @@ typing-extensions==4.12.2
     #   h2serve
     #   mypy
     #   rich
+urllib3==2.3.0
+    # via requests
 userpath==1.9.2
     # via hatch
 uv==0.5.29

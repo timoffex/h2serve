@@ -8,11 +8,11 @@ from ._server import Server, serve
 __version__ = "0.1.0-dev.1"
 
 __all__ = [
+    "serve",
+    "Server",
     "AppHandler",
-    "DataChunk",
-    "Header",
     "HTTP2Request",
     "HTTP2Response",
-    "Server",
-    "serve",
+    "DataChunk",
+    "Header",
 ]

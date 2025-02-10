@@ -16,5 +16,8 @@
       "strings": "off",
       "other": "off"
     }
+  },
+  "[restructuredtext]": {
+    "editor.rulers": [80],
   }
 }

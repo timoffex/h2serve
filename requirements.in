@@ -3,6 +3,7 @@
 -e .
 
 hatch
+sphinx
 
 pytest
 pytest-trio

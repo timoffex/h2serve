@@ -17,6 +17,7 @@ path = "h2serve/__init__.py"
 scheme = "semver"
 
 [tool.ruff.lint]
+exclude = ["docs/**"]
 pydocstyle.convention = "google"
 select = [
   "E",     # pycodestyle (errors)
