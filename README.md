@@ -1,5 +1,7 @@
 # h2serve
 
+[![Documentation Status](https://readthedocs.org/projects/h2serve/badge/?version=latest)](https://h2serve.readthedocs.io/en/latest/?badge=latest)
+
 A Python HTTP/2 server.
 
 **EXPERIMENTAL**. I'm playing around with this in my free time. I started this
