@@ -1,5 +1,7 @@
 # Requirements for testing and development.
 
+-e .
+
 hatch
 
 pytest
