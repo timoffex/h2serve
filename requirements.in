@@ -1,5 +1,7 @@
 # Requirements for testing and development.
 
+hatch
+
 pytest
 pytest-trio
 coverage

@@ -1,6 +1,6 @@
 [project]
 name = "h2serve"
-version = "0.1.0"
+dynamic = ["version"]
 requires-python = ">= 3.9"
 dependencies = [
   "h2 ~= 4.0",                # NOTE: type hints are added in 4.2
@@ -11,6 +11,9 @@ dependencies = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "h2serve/__init__.py"
 
 [tool.ruff.lint]
 pydocstyle.convention = "google"
