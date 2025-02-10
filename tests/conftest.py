@@ -19,17 +19,24 @@ def start_test_server(nursery: trio.Nursery):
         app: The handler to run on the server.
         initiated: Whether to initiate the connection and handle the initial
             frames. Defaults to False.
+        http2_settings: Initial server HTTP/2 setting overrides.
 
     Returns:
         An HTTP2Tester instance.
     """
 
-    async def fn(app, *, initiated=False) -> http2tester.HTTP2Tester:
+    async def fn(
+        app,
+        *,
+        initiated=False,
+        http2_settings=None,
+    ) -> http2tester.HTTP2Tester:
         server = await h2serve.serve(
             nursery,
             app,
             host="localhost",
             port=0,
+            http2_settings=http2_settings,
         )
 
         ssl_ctx = ssl.create_default_context(

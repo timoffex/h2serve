@@ -5,6 +5,7 @@ import logging
 import ssl
 from typing import cast
 
+import h2.settings
 import trio
 
 from ._app_handler import AppHandler
@@ -64,6 +65,7 @@ async def serve(
     *,
     host: str | bytes | None,
     port: int,
+    http2_settings: dict[h2.settings.SettingCodes | int, int] | None = None,
 ) -> Server:
     """Start an HTTP/2 server.
 
@@ -75,8 +77,8 @@ async def serve(
             on your local network (e.g. "192.168.0.<X>"). See the `trio` documentation
             for more.
         port: The port to listen on, or 0 to allow the OS to pick a port for you.
-        server_events: An optional channel on which to log events that may be useful
-            to monitor.
+        http2_settings: Initial settings to use on new connections.
+            Unspecified settings use their default values.
 
     Returns:
         A handle to the server.
@@ -87,6 +89,7 @@ async def serve(
             app,
             host=host,
             port=port,
+            http2_settings=http2_settings,
         )
     )
 
@@ -98,6 +101,7 @@ async def _serve(
     app: AppHandler,
     host: str | bytes | None,
     port: int,
+    http2_settings: dict[h2.settings.SettingCodes | int, int] | None,
     *,
     task_status: trio.TaskStatus[Server] = trio.TASK_STATUS_IGNORED,
 ) -> None:
@@ -131,7 +135,9 @@ async def _serve(
     )
 
     async def handle(stream: trio.SSLStream[trio.SocketStream]) -> None:
-        await HTTP2ConnectionHandler(stream, app).handle_no_except()
+        await HTTP2ConnectionHandler(stream, app).handle_no_except(
+            initial_settings=http2_settings
+        )
 
     with cancel_scope:
         await trio.serve_listeners(handle, listeners)

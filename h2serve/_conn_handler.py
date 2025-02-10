@@ -6,6 +6,7 @@ import h2.config
 import h2.connection
 import h2.events
 import h2.exceptions
+import h2.settings
 import trio
 from h2.errors import ErrorCodes
 
@@ -48,14 +49,21 @@ class HTTP2ConnectionHandler:
 
         self._streams: dict[int, HTTP2StreamHandler] = dict()
 
-    async def handle_no_except(self) -> None:
+    async def handle_no_except(
+        self,
+        *,
+        initial_settings: dict[h2.settings.SettingCodes | int, int] | None = None,
+    ) -> None:
         """Process the stream.
 
         This returns when the stream is closed, for example if the connection is
         closed by us or the peer. Exceptions are logged and do not bubble up.
+
+        Args:
+            initial_settings: Initial HTTP/2 settings to send.
         """
         try:
-            await self._handle()
+            await self._handle(initial_settings)
 
         except Exception as e:
             _logger.exception("Encountered error.", exc_info=e)
@@ -63,7 +71,10 @@ class HTTP2ConnectionHandler:
         else:
             _logger.info("Reached end.")
 
-    async def _handle(self) -> None:
+    async def _handle(
+        self,
+        initial_settings: dict[h2.settings.SettingCodes | int, int] | None = None,
+    ) -> None:
         try:
             _logger.info("New connection.")
 
@@ -80,6 +91,8 @@ class HTTP2ConnectionHandler:
 
                         async with self._state.use() as state:
                             state.initiate_connection()
+                            if initial_settings:
+                                state.update_settings(initial_settings)
 
                         async with trio.open_nursery() as handler_nursery:
                             await self._loop_read(handler_nursery)
