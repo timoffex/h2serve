@@ -6,23 +6,23 @@ this globally rather than in a venv; consider it a `pip` replacement.
 
 1. Create a virtual environment:
 
-  ```
-  uv venv
-  ```
+    ```
+    uv venv
+    ```
 
 2. Activate it as described by the command.
 
-  Install development requirements:
+3. Install development requirements:
 
-  ```
-  uv pip install -r requirements.txt
-  ```
+    ```
+    uv pip install -r requirements.txt
+    ```
 
 Then use `tox` for other tasks. Try running `tox list`.
 
 * `tox run` will by default run tests in all supported Python versions
 * `tox run -e coverage,coverage-html` can be used to collect code coverage
-  and output a nice HTML file visualizing it
+    and output a nice HTML file visualizing it
 
 # Tests prerequisite: localhost.pem
 
