@@ -37,6 +37,8 @@ Run tests:
 pytest
 ```
 
+NOTE: The tests require a `localhost.pem` certificate file in the repo root.
+
 Measure and view code coverage from tests:
 
 ```
@@ -58,3 +60,12 @@ openssl \
 ```
 
 Make sure to enter "localhost" for the common name.
+
+---
+
+Generate documentation:
+
+```
+cd docs
+make html
+```
