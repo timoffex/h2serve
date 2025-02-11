@@ -65,6 +65,7 @@ async def serve(
     *,
     host: str | bytes | None,
     port: int,
+    ssl_context: ssl.SSLContext,
     http2_settings: dict[h2.settings.SettingCodes | int, int] | None = None,
 ) -> Server:
     """Start an HTTP/2 server.
@@ -77,6 +78,8 @@ async def serve(
             on your local network (e.g. "192.168.0.<X>"). See the `trio` documentation
             for more.
         port: The port to listen on, or 0 to allow the OS to pick a port for you.
+        ssl_context: The SSL context to use. It must be a server context (purpose
+            set to `ssl.Purpose.CLIENT_AUTH`) with ALPN protocols set to ["h2"].
         http2_settings: Initial settings to use on new connections.
             Unspecified settings use their default values.
 
@@ -89,6 +92,7 @@ async def serve(
             app,
             host=host,
             port=port,
+            ssl_context=ssl_context,
             http2_settings=http2_settings,
         )
     )
@@ -101,22 +105,14 @@ async def _serve(
     app: AppHandler,
     host: str | bytes | None,
     port: int,
+    ssl_context: ssl.SSLContext,
     http2_settings: dict[h2.settings.SettingCodes | int, int] | None,
     *,
     task_status: trio.TaskStatus[Server] = trio.TASK_STATUS_IGNORED,
 ) -> None:
-    ssl_ctx = ssl.create_default_context(
-        # NOTE: CLIENT_AUTH is used for creating a server socket.
-        # https://github.com/python/cpython/issues/73996
-        purpose=ssl.Purpose.CLIENT_AUTH,
-    )
-
-    ssl_ctx.load_cert_chain("localhost.pem")
-    ssl_ctx.set_alpn_protocols(["h2"])
-
     listeners = await trio.open_ssl_over_tcp_listeners(
         port,
-        ssl_ctx,
+        ssl_context,
         host=host,
     )
 

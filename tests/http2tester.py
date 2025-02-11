@@ -30,7 +30,7 @@ class HTTP2Tester:
         stream: trio.SSLStream,
     ) -> None:
         self._server = server
-        self._stream = stream
+        self.stream = stream
         self._conn = h2.connection.H2Connection()
 
     async def expect(self, frame_type: type[_FrameType]) -> _FrameType:
@@ -81,7 +81,7 @@ class HTTP2Tester:
         total_read = 0
 
         while total_read < n:
-            data = await self._stream.receive_some(n - total_read)
+            data = await self.stream.receive_some(n - total_read)
             if not data:
                 raise AssertionError(f"Stream closed before {n} bytes could be read.")
 
@@ -167,4 +167,4 @@ class HTTP2Tester:
 
     async def _flush(self):
         with _timeout("Timed out."):
-            await self._stream.send_all(self._conn.data_to_send())
+            await self.stream.send_all(self._conn.data_to_send())

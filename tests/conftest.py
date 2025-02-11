@@ -30,25 +30,32 @@ def start_test_server(nursery: trio.Nursery):
         *,
         initiated=False,
         http2_settings=None,
+        ssl_server=None,
+        ssl_client=None,
     ) -> http2tester.HTTP2Tester:
+        if not ssl_server:
+            ssl_server = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
+            ssl_server.load_cert_chain("localhost.pem")
+            ssl_server.set_alpn_protocols(["h2"])
+
         server = await h2serve.serve(
             nursery,
             app,
             host="localhost",
             port=0,
+            ssl_context=ssl_server,
             http2_settings=http2_settings,
         )
 
-        ssl_ctx = ssl.create_default_context(
-            purpose=ssl.Purpose.SERVER_AUTH,
-            cafile="localhost.pem",
-        )
-        ssl_ctx.set_alpn_protocols(["h2"])
+        if not ssl_client:
+            ssl_client = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+            ssl_client.load_verify_locations("localhost.pem")
+            ssl_client.set_alpn_protocols(["h2"])
 
         stream = await trio.open_ssl_over_tcp_stream(
             "localhost",
             server.localhost_port,
-            ssl_context=ssl_ctx,
+            ssl_context=ssl_client,
         )
 
         tester = http2tester.HTTP2Tester(server, stream)
