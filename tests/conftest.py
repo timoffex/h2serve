@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import ssl
+from collections.abc import Awaitable
+from typing import Callable
 
 import hyperframe.frame
 import pytest
@@ -9,6 +11,30 @@ import trio
 import h2serve
 
 from . import http2tester
+
+
+@pytest.fixture
+def expect_soon() -> Callable[[Callable[[], None]], Awaitable[None]]:
+    """Expect an assertion to pass in the next few trio event loop cycles.
+
+    Args:
+        fn: A function that makes an assertion. This function is called
+            repeatedly. Its first few AssertionErrors are suppressed and
+            trio checkpoints are inserted. After a few loops, an
+            AssertionError is allowed to bubble out.
+    """
+
+    async def impl(fn: Callable[[], None]) -> None:
+        for _ in range(20):
+            try:
+                fn()
+                return
+            except AssertionError:
+                await trio.lowlevel.checkpoint()
+
+        fn()
+
+    return impl
 
 
 @pytest.fixture

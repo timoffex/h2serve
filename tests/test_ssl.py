@@ -1,11 +1,13 @@
 import ssl
 
-import trio
-
 from .http2tester import HTTP2Tester
 
 
-async def test_fails_no_alpn_protocol(start_test_server, caplog) -> None:
+async def test_fails_no_alpn_protocol(
+    start_test_server,
+    caplog,
+    expect_soon,
+) -> None:
     async def app(req, resp):
         pass
 
@@ -28,12 +30,18 @@ async def test_fails_no_alpn_protocol(start_test_server, caplog) -> None:
 
     # Check that the server closes the connection and logs an error.
     assert not await tester.stream.receive_some()
-    await trio.lowlevel.checkpoint()
-    await trio.lowlevel.checkpoint()
-    assert "No ALPN protocol negotiated." in caplog.text
+
+    def assert_message():
+        assert "No ALPN protocol negotiated." in caplog.text
+
+    await expect_soon(assert_message)
 
 
-async def test_fails_invalid_alpn_protocol(start_test_server, caplog) -> None:
+async def test_fails_invalid_alpn_protocol(
+    start_test_server,
+    caplog,
+    expect_soon,
+) -> None:
     async def app(req, resp):
         pass
 
@@ -56,6 +64,8 @@ async def test_fails_invalid_alpn_protocol(start_test_server, caplog) -> None:
 
     # Check that the server closes the connection and logs an error.
     assert not await tester.stream.receive_some()
-    await trio.lowlevel.checkpoint()
-    await trio.lowlevel.checkpoint()
-    assert "Invalid protocol selected: http/1.1" in caplog.text
+
+    def assert_message():
+        assert "Invalid protocol selected: http/1.1" in caplog.text
+
+    await expect_soon(assert_message)
