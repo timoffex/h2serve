@@ -1,53 +1,34 @@
 # Getting started
 
-Make sure `python` is installed.
+Install [uv](https://github.com/astral-sh/uv). If you already have Python
+installed, you can install `uv` using `pip install uv`. I recommend doing
+this globally rather than in a venv; consider it a `pip` replacement.
 
-Install [uv](https://github.com/astral-sh/uv):
+1. Create a virtual environment:
 
-```
-pip install uv
-```
+  ```
+  uv venv
+  ```
 
-Create a virtual environment:
+2. Activate it as described by the command.
 
-```
-uv venv
-```
+  Install development requirements:
 
-Activate it as described by the command.
+  ```
+  uv pip install -r requirements.txt
+  ```
 
-# Cheatsheet
+Then use `tox` for other tasks. Try running `tox list`.
 
-Install development requirements:
+* `tox run` will by default run tests in all supported Python versions
+* `tox run -e coverage,coverage-html` can be used to collect code coverage
+  and output a nice HTML file visualizing it
 
-```
-uv pip install -r requirements.txt
-```
+# Tests prerequisite: localhost.pem
 
-Update development requirements:
-
-1. Update `requirements.in`
-2. `uv pip compile requirements.in -o requirements.txt`
-
----
-
-Run tests:
-
-```
-pytest
-```
-
-NOTE: The tests require a `localhost.pem` certificate file in the repo root.
-
-Measure and view code coverage from tests:
-
-```
-coverage -m pytest
-coverage html
-# Then open the generated file, likely htmlcov/index.html.
-```
-
----
+Tests spin up a server on localhost (it's very lightweight!), for which they
+need an SSL certificate. They expect a self-signed certificate called
+"localhost.pem" that's valid for "localhost".
 
 Generate a self-signed certificate for local testing:
 
@@ -60,12 +41,3 @@ openssl \
 ```
 
 Make sure to enter "localhost" for the common name.
-
----
-
-Generate documentation:
-
-```
-cd docs
-make html
-```

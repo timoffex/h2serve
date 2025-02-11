@@ -15,6 +15,10 @@ stream_id_ctx: ContextVar[int | None] = ContextVar("stream_id", default=None)
 class ContextualLogger(logging.LoggerAdapter):
     """Logger adapter for the entire package."""
 
+    def __init__(self, logger: logging.Logger) -> None:
+        # extra=None is required in Python 3.9.
+        super().__init__(logger, extra=None)
+
     def process(
         self,
         msg: str,

@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import logging
 import ssl
-from typing import cast
+from typing import Union, cast
 
 import h2.settings
 import trio
@@ -15,7 +15,8 @@ from ._logging import ContextualLogger
 _logger = ContextualLogger(logging.getLogger(__name__))
 
 
-INETSocketAddr = tuple[str, int] | tuple[str, int, int, int]
+# Using | in type aliases is Python 3.10+
+INETSocketAddr = Union[tuple[str, int], tuple[str, int, int, int]]
 """An IPv4 (host, port) or an IPv6 (host, port, flowinfo, scope_id).
 
 See the Python socket module's descriptions of the AF_INET and AF_INET6

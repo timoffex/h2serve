@@ -1,0 +1,6 @@
+# Requirements for using Sphinx.
+#
+# Note that the package itself is required explicitly in .readthedocs.yaml,
+# as pinning its dependencies doesn't seem useful.
+
+sphinx==8.1.3

@@ -1,15 +1,19 @@
-# Requirements for testing and development.
+################################################################################
+# Requirements to bootstrap a dev environment.
+#
+# To install these, you should already have `uv`. Note that you can install
+# `uv` separately from Python and that it can manage Python versions for you!
+#
+# After installing these, tox is used for most development needs.
+# Use `tox run -e compile-requirements` to regenerate requirements.txt.
+################################################################################
 
--e .
+# Tox is used for testing and most actions.
+tox
+tox-uv
 
-hatch
-sphinx
-
-pytest
-pytest-trio
-coverage
-
+# Ruff is used for linting and formatting.
 ruff
-mypy
 
-hyperframe
+# Mypy is used for type checknig.
+mypy

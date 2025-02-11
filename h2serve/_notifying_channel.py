@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import trio
 from typing_extensions import override
 
@@ -15,7 +17,7 @@ def notifying_channel(
     to block the read loop. When sending a DATA frame on a stream, we pass an
     event and wait on it, blocking that stream from generating more data.
     """
-    send, recv = trio.open_memory_channel[tuple[bytes, trio.Event | None]](buffer)
+    send, recv = trio.open_memory_channel[tuple[bytes, Optional[trio.Event]]](buffer)
     return (
         NotifyingSendChannel(send),
         NotifyingReceiveChannel(recv),

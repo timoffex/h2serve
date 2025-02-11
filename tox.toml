@@ -1,0 +1,52 @@
+requires = ["tox>=4.21"]
+env_list = ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+[env_run_base]
+description = "run the test suite with pytest"
+deps = ["pytest", "pytest-trio", "hyperframe"]
+commands = [["pytest", "tests"]]
+
+[env.coverage]
+description = "collect test coverage"
+deps = [
+  { replace = "ref", of = [
+    "env_run_base",
+    "deps",
+  ], extend = true },
+  "coverage",
+]
+commands = [["coverage", "run", "--branch", "-m", "pytest", "tests"]]
+
+[env.coverage-html]
+description = "produce an HTML report after running 'coverage'"
+# Depend on the 'coverage' tox environment:
+depends = ["coverage"]
+# Require the 'coverage' Python package:
+deps = ["coverage"]
+commands = [["coverage", "html"]]
+
+[env.compile-requirements]
+description = "generate requirements.txt and docs/requirements.txt"
+commands = [
+  [
+    "uv",
+    "pip",
+    "compile",
+    "requirements.in",
+    "-o",
+    "requirements.txt",
+  ],
+  [
+    "uv",
+    "pip",
+    "compile",
+    "docs/requirements.in",
+    "-o",
+    "docs/requirements.txt",
+  ],
+]
+
+[env.docs]
+description = "generate HTML documentation with Sphinx"
+deps = ["sphinx==8.1.3"]
+commands = [["sphinx-build", "docs/source", "docs/build", "--color"]]
