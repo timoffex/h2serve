@@ -3,7 +3,7 @@ env_list = ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
 [env_run_base]
 description = "run the test suite with pytest"
-deps = ["pytest", "pytest-trio", "hyperframe"]
+deps = ["-r requirements_test.txt"]
 commands = [["pytest", "tests"]]
 
 [env.coverage]

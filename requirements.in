@@ -17,3 +17,7 @@ ruff
 
 # Mypy is used for type checknig.
 mypy
+
+# It's good to install these to have IDE autocompletion,
+# but note that tests will use versions picked by tox.
+-r requirements_test.txt
