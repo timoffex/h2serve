@@ -6,6 +6,10 @@ import h2serve
 from .http2tester import HTTP2Tester
 
 
+class _TestError(Exception):
+    """An expected error in a test."""
+
+
 async def test_passes_request_to_app(start_test_server) -> None:
     received_req_headers: list[h2serve.Header] = []
     received_req_body: bytes = b""
@@ -108,3 +112,30 @@ async def test_cancels_app_on_stream_reset(start_test_server) -> None:
 
     with trio.fail_after(1):
         await cancelled.wait()
+
+
+async def test_resets_stream_on_app_exception(
+    start_test_server,
+    expect_soon,
+    caplog,
+) -> None:
+    async def app(req, resp):
+        raise _TestError()
+
+    tester: HTTP2Tester = await start_test_server(app, initiated=True)
+
+    stream_id = await tester.start_request("GET", "/", end_stream=False)
+    await tester.send_data(stream_id, b"123", end_stream=True)
+
+    # Expect an RST_STREAM immediately, in response to the headers.
+    frame = await tester.expect(hyperframe.frame.RstStreamFrame)
+    assert frame.stream_id == stream_id
+
+    def assert_message():
+        assert "Stream ended due to exception." in caplog.text
+        assert "_TestError" in caplog.text
+
+    await expect_soon(assert_message)
+
+    # Expect we can still use the connection.
+    await tester.ping_and_expect_pong()

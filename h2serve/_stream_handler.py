@@ -97,11 +97,10 @@ class HTTP2StreamHandler:
                     self.id,
                 )
 
-        self._nursery.start_soon(handle_ack)
-
         try:
             self._req_body_in.send_nowait(DataChunk(data, ack_event))
-        except trio.ClosedResourceError:
+            self._nursery.start_soon(handle_ack)
+        except trio.BrokenResourceError:
             # This means the handler will not read the rest of the body,
             # so we can simply ack the data.
             ack_event.set()
@@ -112,7 +111,7 @@ class HTTP2StreamHandler:
         try:
             for trailer_pair in trailers:
                 self._trailers_in.send_nowait(trailer_pair)
-        except trio.ClosedResourceError:
+        except trio.BrokenResourceError:
             # This means the handler will not read the rest of the trailers.
             return
 

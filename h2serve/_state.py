@@ -58,7 +58,7 @@ class HTTP2State:
         from the channel, which creates backpressure.
 
         Raises:
-            trio.ClosedResourceError: If we are unable to flush data, meaning that
+            trio.BrokenResourceError: If we are unable to flush data, meaning that
                 the connection has been closed.
         """
         async with self._h2_state_cond:
