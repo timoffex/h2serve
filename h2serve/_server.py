@@ -25,6 +25,8 @@ socket families.
 
 
 class Server:
+    """A handle to a running HTTP/2 server."""
+
     def __init__(
         self,
         cancel_scope: trio.CancelScope,
